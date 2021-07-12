@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 m_Movement;
     private Quaternion m_Rotation = Quaternion.identity; /*identity = Quaternion의 기본값*/
 
+    private AudioSource m_AudioSource;
+
     [SerializeField]
     private float turnSpeed = 20f;
 
@@ -16,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     {
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
+        m_AudioSource = GetComponent<AudioSource>();
     }
 
     private void FixedUpdate()
@@ -35,6 +38,18 @@ public class PlayerMovement : MonoBehaviour
 
         //JohnLemon 애니메이터에서 IsWaking파라메터가 true 인지 false 인지 확인
         m_Animator.SetBool("IsWalking", isWalking);
+
+        if (isWalking)
+        {
+            if (!m_AudioSource.isPlaying)
+            {
+                m_AudioSource.Play();
+            }
+        }
+        else
+        {
+            m_AudioSource.Stop();
+        }
 
         Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation(desiredForward);
